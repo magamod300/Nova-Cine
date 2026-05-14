@@ -1,0 +1,136 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary);padding:.5rem 0 2rem}
+h2{font-size:15px;font-weight:500;margin:1.8rem 0 .6rem}
+h3{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--color-text-secondary);margin:1.4rem 0 .5rem;padding-bottom:5px;border-bottom:.5px solid var(--color-border-tertiary)}
+.card{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 14px;margin-bottom:10px}
+.card-title{font-size:13px;font-weight:500;margin-bottom:5px;display:flex;align-items:center;gap:8px}
+.card-body{font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+.badge{font-size:10px;font-weight:500;padding:2px 8px;border-radius:12px;white-space:nowrap;flex-shrink:0}
+.b-g{background:#EAF3DE;color:#3B6D11}
+.b-r{background:#FCEBEB;color:#A32D2D}
+.b-b{background:#E6F1FB;color:#185FA5}
+.b-a{background:#FAEEDA;color:#854F0B}
+.b-p{background:#EEEDFE;color:#3C3489}
+code{font-family:var(--font-mono);font-size:11px;background:var(--color-background-secondary);padding:1px 5px;border-radius:3px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:.5rem 0}
+th{text-align:left;padding:5px 8px;background:var(--color-background-secondary);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-secondary)}
+td{padding:6px 8px;border-top:.5px solid var(--color-border-tertiary);vertical-align:top}
+tr:hover td{background:var(--color-background-secondary)}
+.ok{color:#3B6D11;font-weight:500}
+.warn{color:#854F0B;font-weight:500}
+.no{color:#A32D2D;font-weight:500}
+.new{color:#185FA5;font-weight:500}
+.cost{color:#3C3489;font-weight:500}
+.cblock{background:var(--color-background-secondary);border-radius:6px;padding:10px;font-family:var(--font-mono);font-size:11px;line-height:1.6;margin:.5rem 0;color:var(--color-text-secondary)}
+.arrow{color:var(--color-text-secondary);margin:0 4px}
+</style>
+
+<h3>A — Provider ES-first para CinePro (Cuevana3 / Pelisplus)</h3>
+<div class="card">
+  <div class="card-title"><span class="badge b-a">1 día TypeScript</span> Cómo escribir el provider</div>
+  <div class="card-body">
+    CinePro usa el framework <code>@omss/framework</code>. Cada provider es una clase TypeScript en <code>src/providers/{nombre}/{nombre}.ts</code> que extiende <code>BaseProvider</code>. Solo necesitas implementar un método <code>async fetch(tmdbId, type)</code> que retorna <code>Source[]</code>.
+    <div class="cblock">// src/providers/pelisplus/pelisplus.ts<br>import { BaseProvider, Source } from '@omss/framework';<br>export class PelisplusProvider extends BaseProvider {<br>&nbsp;&nbsp;name = 'Pelisplus';<br>&nbsp;&nbsp;async fetch(tmdbId: number, type: 'movie'|'tv', opts?): Promise&lt;Source[]&gt; {<br>&nbsp;&nbsp;&nbsp;&nbsp;// 1. Obtener título ES de TMDB<br>&nbsp;&nbsp;&nbsp;&nbsp;// 2. Buscar en pelisplus.lat/?s={titulo}<br>&nbsp;&nbsp;&nbsp;&nbsp;// 3. Scrapear el embed URL de la página del resultado<br>&nbsp;&nbsp;&nbsp;&nbsp;// 4. Resolver el embed a .m3u8 (opcional, puede ser iframe)<br>&nbsp;&nbsp;&nbsp;&nbsp;return [{ url, type:'hls', language:'es', quality:'1080p', provider:'Pelisplus' }];<br>&nbsp;&nbsp;}<br>}</div>
+    Pelisplus.lat es WordPress con endpoints <code>/wp-json/wp/v2/posts?meta_key=tmdb_id&meta_value={id}</code> — más fácil que scraping HTML. Cuevana3.lat tiene <code>/api/movies/{tmdbId}</code> no documentado pero funcional. El paso más difícil es resolver el embed a .m3u8 (filemoon, streamtape, streamwish) pero CinePro ya tiene extractores para algunos de esos.
+  </div>
+</div>
+
+<h3>B — Railway vs Render para CinePro (sin cold start)</h3>
+<div class="card">
+  <div class="card-title"><span class="badge b-r">CAMBIO IMPORTANTE</span> Railway ya no es completamente gratis</div>
+  <div class="card-body">
+    <table>
+      <thead><tr><th>Plataforma</th><th>Free tier</th><th>Sleep</th><th>Precio sin sleep</th><th>Veredicto para CinePro</th></tr></thead>
+      <tbody>
+        <tr><td><b>Render (actual)</b></td><td>750h/mes</td><td class="warn">Sí — 15 min</td><td>$7/mes</td><td>Lo que tienes. Funciona con cron ping.</td></tr>
+        <tr><td><b>Railway Hobby</b></td><td>$1/mes mínimo post-trial</td><td class="ok">No duerme</td><td>$5/mes (+uso)</td><td>Mejor opción: sin cold start, sin cron</td></tr>
+        <tr><td><b>Cloudflare Workers</b></td><td>100k req/día GRATIS</td><td class="no">N/A — sin estado</td><td>Gratis</td><td>NO funciona: 10ms CPU limit por request. CinePro necesita 200-2000ms para scrapear</td></tr>
+        <tr><td><b>Fly.io</b></td><td>3 VMs gratis</td><td class="ok">No duerme</td><td>~$5/mes</td><td>Buena alternativa. Deploy con Dockerfile.</td></tr>
+      </tbody>
+    </table>
+    <b>Recomendación:</b> Si el cold start de 30-50s te molesta, migra a <b>Railway Hobby ($5/mes)</b>. No duerme, deploy directo desde GitHub, mismo flujo que Render. El trial inicial da $5 gratis para probar. Nota: Railway tuvo outages en diciembre 2025 en EU West — si usas región US no afecta.
+  </div>
+</div>
+
+<h3>C — Torrentio API para LAT (ya parcialmente implementado en v4.11)</h3>
+<div class="card">
+  <div class="card-title"><span class="badge b-g">Listo para usar</span> API pública sin key</div>
+  <div class="card-body">
+    Torrentio tiene API REST pública. No requiere cuenta ni key.
+    <div class="cblock">// Endpoint:<br>https://torrentio.strem.fun/stream/movie/{imdbId}.json<br>https://torrentio.strem.fun/stream/series/{imdbId}:{season}:{episode}.json<br><br>// Response: { streams: [{ title: "Dune...[LAT][1080p] Wolfmax4k", url, ... }] }<br>// Filtrar español:<br>const esp = streams.filter(s => /LAT|ESP|DUAL|Spanish|Latino/i.test(s.title));</div>
+    Grupos que etiquetan en español: <b>Wolfmax4k</b>, <b>MejorTorrent</b>, <b>Cinecalidad</b>, <b>HDARG</b>, <b>Telly</b>. Los streams son magnets (gratis, lento) o links HTTP de Real-Debrid (~3€/mes, instantáneo). Lo que falta implementar: mostrar esos streams como botones reproducibles en el player — los links HTTP de Debrid van directo a <code>playMp4()</code>.
+  </div>
+</div>
+
+<h3>D — Subtítulos SubDL API (gratis con cuenta)</h3>
+<div class="card">
+  <div class="card-title"><span class="badge b-b">API gratuita</span> subdl.com — soporta TMDB ID + español</div>
+  <div class="card-body">
+    <div class="cblock">// Registro en subdl.com → API Key gratuita<br>// Endpoint:<br>GET https://api.subdl.com/api/v1/subtitles?api_key=KEY&tmdb_id=27205&type=movie&languages=ES<br><br>// Response: { subtitles: [{<br>//   url: "/subtitles/...",  // relativo a dl.subdl.com<br>//   language: "es",<br>//   release_name: "Inception.2010.BDRip...",<br>//   hi: false  // si es para sordos<br>// }]}<br><br>// Descargar: https://dl.subdl.com + url (zip con .srt)<br>// Convertir .srt a .vtt para track de HTML5</div>
+    <b>Flujo para NovaCine Electron:</b> cuando <code>cineVideo</code> está activo (HLS nativo), hacer IPC call a main.js que descarga el .srt, lo convierte a .vtt, lo escribe en temp, y lo devuelve como path local. El renderer inyecta <code>&lt;track src="file://...vtt" kind="subtitles" srclang="es" default&gt;</code>. OpenSubtitles también tiene API (5 subs/día gratis sin cuenta, más con cuenta). SubDL es más simple.
+  </div>
+</div>
+
+<h3>E — Discord Rich Presence (Electron)</h3>
+<div class="card">
+  <div class="card-title"><span class="badge b-p">1-2 horas</span> npm discord-rpc — sigue funcionando en 2025</div>
+  <div class="card-body">
+    <div class="cblock">// package.json: "discord-rpc": "^4.0.1"<br>// main.js:<br>const DiscordRPC = require('discord-rpc');<br>const rpc = new DiscordRPC.Client({ transport: 'ipc' });<br>const clientId = 'TU_APP_ID'; // crear en discord.com/developers<br><br>rpc.login({ clientId }).catch(console.warn);<br><br>// IPC desde renderer:<br>ipcMain.handle('set-activity', (_e, data) => {<br>&nbsp;&nbsp;rpc.setActivity({<br>&nbsp;&nbsp;&nbsp;&nbsp;details: `Viendo ${data.title}`,<br>&nbsp;&nbsp;&nbsp;&nbsp;state: data.isSeries ? `T${data.s}·E${data.e}` : data.year || '',<br>&nbsp;&nbsp;&nbsp;&nbsp;startTimestamp: Date.now(),<br>&nbsp;&nbsp;&nbsp;&nbsp;largeImageKey: 'novacine_logo',<br>&nbsp;&nbsp;&nbsp;&nbsp;largeImageText: 'NovaCine',<br>&nbsp;&nbsp;&nbsp;&nbsp;buttons: [{ label: 'Ver en NovaCine', url: `https://novacine.workers.dev/#movie/${data.id}` }]<br>&nbsp;&nbsp;}).catch(()=>{});<br>});</div>
+    Pasos: (1) Crear app en discord.com/developers → copiar Application ID. (2) En Assets subir el logo de NovaCine como "novacine_logo". (3) <code>npm install discord-rpc</code>. (4) Llamar <code>ipcRenderer.invoke('set-activity', {...})</code> desde el renderer al hacer click en un servidor. Funciona aunque el user no tenga Discord abierto (falla silenciosamente).
+  </div>
+</div>
+
+<h3>F — Backup automático jsonbin.io (sin código extra de servidor)</h3>
+<div class="card">
+  <div class="card-title"><span class="badge b-g">Activo 2026</span> jsonbin.io — requiere registro gratuito</div>
+  <div class="card-body">
+    <div class="cblock">// Crear cuenta en jsonbin.io → X-Master-Key<br>// Primera vez (crear bin):<br>const r = await fetch('https://api.jsonbin.io/v3/b', {<br>&nbsp;&nbsp;method:'POST',<br>&nbsp;&nbsp;headers:{'Content-Type':'application/json','X-Master-Key':KEY,'X-Bin-Name':'NovaCine'},<br>&nbsp;&nbsp;body: JSON.stringify(exportData())<br>});<br>const { metadata } = await r.json();<br>localStorage.setItem('nc_jbin_id', metadata.id);<br><br>// Auto-save cada 30 min:<br>setInterval(async () => {<br>&nbsp;&nbsp;const id = localStorage.getItem('nc_jbin_id');<br>&nbsp;&nbsp;if (!id) return;<br>&nbsp;&nbsp;await fetch(`https://api.jsonbin.io/v3/b/${id}`, {<br>&nbsp;&nbsp;&nbsp;&nbsp;method:'PUT',<br>&nbsp;&nbsp;&nbsp;&nbsp;headers:{'Content-Type':'application/json','X-Master-Key':KEY},<br>&nbsp;&nbsp;&nbsp;&nbsp;body: JSON.stringify(exportData())<br>&nbsp;&nbsp;});<br>}, 30 * 60 * 1000);</div>
+    Alternativa sin cuenta: <b>kvdb.io</b> — genera un bucket ID aleatorio sin registro, gratis, perfect para esto. <code>https://kvdb.io/TU_BUCKET_ID/novacine-backup</code>.
+  </div>
+</div>
+
+<h3>G — Colecciones TMDB (Sagas) — ya en la API, 0 código extra</h3>
+<div class="card">
+  <div class="card-title"><span class="badge b-g">Gratis — ya disponible</span> El response de /movie/{id} ya incluye la colección</div>
+  <div class="card-body">
+    Cuando llamas a <code>GET /movie/{tmdbId}</code>, el response ya incluye <code>belongs_to_collection: {id, name, poster_path}</code> si la película pertenece a una saga. Solo hay que leerlo.
+    <div class="cblock">// En openContent, después de tmdbFetch:<br>if (m.belongs_to_collection) {<br>&nbsp;&nbsp;const col = await tmdbFetch(<br>&nbsp;&nbsp;&nbsp;&nbsp;`https://api.themoviedb.org/3/collection/${m.belongs_to_collection.id}?api_key=${KEY}&language=es-MX`<br>&nbsp;&nbsp;);<br>&nbsp;&nbsp;// col.parts = [{id, title, poster_path, release_date}, ...] — todos los filmes<br>&nbsp;&nbsp;// Mostrar como scroll row "Saga: John Wick (4 filmes)"<br>}</div>
+    Esto ya está en la caché TMDB (1h) así que no cuesta requests adicionales si ya abriste la película. Una de las features de más impacto con menos trabajo.
+  </div>
+</div>
+
+<h3>H — Buscador por persona (actor/director)</h3>
+<div class="card">
+  <div class="card-title"><span class="badge b-b">2-3 horas</span> TMDB /search/person + /person/{id}/movie_credits</div>
+  <div class="card-body">
+    <div class="cblock">// Buscar persona:<br>GET /search/person?query=Keanu+Reeves&language=es-MX<br>// Filmografía:<br>GET /person/{id}/combined_credits?language=es-MX<br>// Response: { cast: [{id, title, poster_path, release_date, media_type}], crew: [...] }</div>
+    Implementación en NovaCine: cuando el autocomplete no encuentra películas pero sí personas (el endpoint <code>/search/multi</code> ya devuelve personas), mostrarlas con icono diferente en el dropdown. Click en persona → cargar filmografía como grid. <code>/search/multi</code> ya está disponible en TMDB y devuelve <code>media_type: "person"</code>.
+  </div>
+</div>
+
+<h3>I — PiP nativo + Speed control (5-10 líneas cada uno)</h3>
+<div class="card">
+  <div class="card-title"><span class="badge b-g">Trivial</span> Solo aplica a fuentes CinePro (cineVideo)</div>
+  <div class="card-body">
+    <div class="cblock">// PiP — añadir a los botones del player:<br>function togglePip(){<br>&nbsp;&nbsp;const v=$('cineVideo');<br>&nbsp;&nbsp;if(!v||v.style.display==='none') return toast('Solo con fuentes CinePro','err');<br>&nbsp;&nbsp;if(document.pictureInPictureElement) document.exitPictureInPicture();<br>&nbsp;&nbsp;else v.requestPictureInPicture().catch(e=>toast('PiP no soportado','err'));<br>}<br><br>// Speed control — select flotante encima del video:<br>&lt;select onchange="$('cineVideo').playbackRate=+this.value" style="display:none" id="speedSel"&gt;<br>&nbsp;&nbsp;[0.5, 0.75, 1, 1.25, 1.5, 2].map(s=>`&lt;option value="${s}"${s===1?' selected':''}&gt;${s}x&lt;/option&gt;`)<br>&lt;/select&gt;<br>// Mostrar speedSel solo cuando cineVideo está activo</div>
+    PiP en Chrome/Edge/Safari moderno. Firefox necesita user gesture explícito. El speed control es puro HTML nativo — <code>video.playbackRate</code> es estándar desde HTML5.
+  </div>
+</div>
+
+<h3>Prioridad de implementación</h3>
+<table>
+  <thead><tr><th>Item</th><th>Costo</th><th>Impacto</th><th>Prioridad</th></tr></thead>
+  <tbody>
+    <tr><td>Colecciones TMDB (Sagas)</td><td class="ok">15 líneas</td><td class="ok">Alto — feature visible</td><td><span class="badge b-g">Esta semana</span></td></tr>
+    <tr><td>PiP nativo + Speed control</td><td class="ok">10 líneas</td><td class="ok">Alto para usuarios CinePro</td><td><span class="badge b-g">Esta semana</span></td></tr>
+    <tr><td>Torrentio streams en player</td><td class="ok">30 líneas</td><td class="ok">Muy alto para LAT</td><td><span class="badge b-g">Este mes</span></td></tr>
+    <tr><td>SubDL subtítulos (Electron)</td><td>2-3 horas</td><td class="ok">Alto — gap principal del HLS</td><td><span class="badge b-b">Este mes</span></td></tr>
+    <tr><td>Backup automático jsonbin.io</td><td>1 hora</td><td>Medio — comodidad</td><td><span class="badge b-b">Este mes</span></td></tr>
+    <tr><td>Buscador por persona</td><td>2-3 horas</td><td>Medio — discovery</td><td><span class="badge b-a">Cuando tengas tiempo</span></td></tr>
+    <tr><td>Discord Rich Presence</td><td>1-2 horas</td><td>Bajo — fun feature</td><td><span class="badge b-a">Cuando tengas tiempo</span></td></tr>
+    <tr><td>Railway Hobby (sin cold start)</td><td class="cost">$5/mes</td><td class="ok">Alto — 30-50s menos de espera</td><td><span class="badge b-a">Decisión tuya</span></td></tr>
+    <tr><td>Provider ES-first CinePro</td><td>1 día TypeScript</td><td class="ok">Muy alto — doblaje LAT nativo</td><td><span class="badge b-r">Proyecto grande</span></td></tr>
+  </tbody>
+</table>

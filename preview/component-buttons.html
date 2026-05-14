@@ -1,0 +1,37 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="_card.css">
+<style>
+  .btn{border:none;cursor:pointer;border-radius:6px;font-size:.78rem;font-weight:500;
+    padding:9px 16px;font-family:'Netflix Sans',system-ui,sans-serif;letter-spacing:.005em;
+    display:inline-flex;align-items:center;gap:6px;line-height:1;
+    transition:background .15s,border-color .15s,color .15s,transform .08s;}
+  .btn:active{transform:translateY(1px)}
+  .btn-r{background:#e5383b;color:#fff}
+  .btn-r:hover{background:#c9292c}
+  .btn-g{background:transparent;border:1px solid #252540;color:#a5a5b8}
+  .btn-g:hover{border-color:#363655;color:#eaeaf0}
+  .btn-grn{background:#4ade80;color:#0a0a14;font-weight:600}
+  .btn-grn:hover{background:#22c55e}
+  .btn-pur{background:transparent;color:#a78bfa;border:1px solid rgba(167,139,250,.32)}
+  .btn-pur:hover{background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.5)}
+  .btn-gold{background:transparent;color:#fbbf24;border:1px solid rgba(251,191,36,.28)}
+  .btn-gold:hover{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.5)}
+  .sw{display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.9}
+  .specrow{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.6rem;color:#666685;margin-top:4px}
+  .specrow code{font-family:ui-monospace,Menlo,Consolas,monospace;color:#a5a5b8;font-size:.6rem}
+</style>
+</head>
+<body><div class="col" style="gap:14px">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <button class="btn btn-r">Buscar</button>
+    <button class="btn btn-g">Recargar</button>
+    <button class="btn btn-grn">Buscar Latino</button>
+    <button class="btn btn-pur"><span class="sw"></span>Favoritos</button>
+    <button class="btn btn-gold">Ajustes</button>
+  </div>
+  <div class="specrow">
+    <code>primary</code><span>red · 9/16 · 500 · #fff</span>
+    <code>ghost</code><span>transparent · 1px border · dim text</span>
+    <code>success</code><span>green · weight 600 · dark text</span>
+    <code>accent</code><span>tinted border · matching text color</span>
+  </div>
+</div></body></html>

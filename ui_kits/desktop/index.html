@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>NovaCine — UI Kit</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#090910;--s1:#0f0f1a;--s2:#161625;--s3:#1e1e32;
+  --bdr:#252540;--txt:#eaeaf0;--dim:#666685;--faint:#363655;
+  --red:#e5383b;--grn:#4ade80;--gold:#fbbf24;--blu:#60a5fa;--pur:#a78bfa;
+}
+html{color-scheme:dark}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',system-ui,sans-serif;
+  min-height:100vh;-webkit-font-smoothing:antialiased}
+input,button,select{font-family:inherit;color:inherit}
+.w{max-width:1180px;margin:0 auto;padding:0 18px}
+
+header{border-bottom:1px solid var(--bdr);padding:13px 0;position:sticky;top:0;z-index:100;
+  background:rgba(9,9,16,.94);backdrop-filter:blur(14px)}
+.hrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.08em;line-height:1;cursor:pointer}
+.logo em{color:var(--red);font-style:normal}
+.sform{flex:1;display:flex;gap:7px;position:relative;min-width:180px}
+.si{flex:1;background:var(--s2);border:1px solid var(--bdr);border-radius:6px;
+  padding:9px 13px;font-size:.87rem;outline:none;transition:border-color .15s}
+.si::placeholder{color:var(--faint)}
+.si:focus{border-color:var(--red)}
+.hbtns{display:flex;gap:6px}
+.btn{border:none;cursor:pointer;border-radius:6px;font-size:.8rem;font-weight:500;
+  padding:8px 13px;transition:all .15s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.btn-r{background:var(--red);color:#fff}.btn-r:hover{background:#c9292c}
+.btn-g{background:transparent;border:1px solid var(--bdr);color:var(--dim)}
+.btn-g:hover{border-color:var(--dim);color:var(--txt)}
+.btn-grn{background:var(--grn);color:#000;font-weight:700}.btn-grn:hover{background:#22c55e}
+.btn-pur{background:rgba(167,139,250,.15);color:var(--pur);border:1px solid rgba(167,139,250,.3)}
+.btn-pur:hover{background:rgba(167,139,250,.25)}
+.ttabs{display:flex;gap:4px;flex-wrap:wrap;margin-top:9px}
+.ttab{background:transparent;border:1px solid var(--bdr);color:var(--dim);cursor:pointer;
+  border-radius:5px;padding:5px 10px;font-size:.76rem;font-weight:500;transition:all .15s}
+.ttab:hover{border-color:var(--dim);color:var(--txt)}
+.ttab.on{background:var(--red);border-color:var(--red);color:#fff}
+.ubar{display:flex;gap:7px;margin-top:8px}
+.ui{flex:1;background:var(--s1);border:1px solid var(--bdr);border-radius:6px;
+  padding:8px 12px;font-size:.76rem;outline:none}
+.ui::placeholder{color:var(--faint);font-style:italic}
+
+.section-label{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
+  margin:18px 0 12px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--bdr)}
+
+/* Trending row */
+.trend-tabs{display:flex;gap:6px;margin-bottom:14px}
+.trend-tab{background:transparent;border:1px solid var(--bdr);color:var(--dim);cursor:pointer;
+  border-radius:5px;padding:5px 12px;font-size:.75rem;font-weight:500;transition:all .15s}
+.trend-tab.on{background:var(--s3);border-color:var(--dim);color:var(--txt)}
+.scroll-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+
+/* Cards */
+.card-sm{flex-shrink:0;width:130px;cursor:pointer;border-radius:6px;overflow:hidden;
+  background:var(--s1);border:1px solid var(--bdr);transition:all .18s;position:relative}
+.card-sm:hover{transform:translateY(-3px);border-color:var(--dim)}
+.card-img{width:100%;aspect-ratio:2/3;display:block;background:var(--s2);position:relative;overflow:hidden}
+.card-img .poster-gen{position:absolute;inset:0;display:flex;align-items:flex-end;padding:7px;
+  font-family:'Bebas Neue';letter-spacing:.04em;line-height:1;font-size:.85rem}
+.card-body{padding:6px 8px 8px}
+.card-title{font-size:.7rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-meta{font-size:.6rem;color:var(--gold);margin-top:1px;display:flex;gap:5px}
+.card-meta .yr{color:var(--dim)}
+
+.cw-progress{height:3px;background:var(--faint)}
+.cw-progress div{height:100%;background:var(--red)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(136px,1fr));gap:11px}
+
+/* Player */
+.player{display:none;padding:18px 0}
+.player.on{display:block}
+.pmeta{display:flex;gap:14px;margin-bottom:13px}
+.pposter{width:68px;height:102px;border-radius:5px;border:1px solid var(--bdr);flex-shrink:0;
+  background:linear-gradient(135deg,#3a2532 0%,#1a1a2e 100%);
+  display:flex;align-items:flex-end;padding:6px;color:var(--gold);font-family:'Bebas Neue';
+  letter-spacing:.04em;font-size:.65rem}
+.pinfo{flex:1;min-width:0}
+.ptitle{font-family:'Bebas Neue';font-size:clamp(1.35rem,3.5vw,2rem);letter-spacing:.04em;line-height:1}
+.ptags{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.tag{font-size:.64rem;font-weight:500;padding:2px 7px;border-radius:3px}
+.t-r{background:rgba(229,56,59,.15);color:var(--red);border:1px solid rgba(229,56,59,.28)}
+.t-g{background:rgba(251,191,36,.12);color:var(--gold);border:1px solid rgba(251,191,36,.25)}
+.t-b{background:rgba(96,165,250,.1);color:var(--blu);border:1px solid rgba(96,165,250,.2)}
+.t-grn{background:rgba(74,222,128,.12);color:var(--grn);border:1px solid rgba(74,222,128,.25)}
+.poverview{font-size:.77rem;color:var(--dim);line-height:1.55;margin-top:7px}
+.pactions{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+
+.player-tabs{display:flex;margin:14px 0;border:1px solid var(--bdr);border-radius:7px;overflow:hidden}
+.ptab{flex:1;background:var(--s1);border:none;color:var(--dim);cursor:pointer;
+  padding:9px 14px;font-size:.78rem;font-weight:500;transition:all .15s;text-align:center}
+.ptab:hover{background:var(--s2);color:var(--txt)}
+.ptab.on{background:var(--s3);color:var(--txt);border-bottom:2px solid var(--red)}
+
+.torrent-status{font-size:.75rem;color:var(--dim);margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.torrent-list{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.torrent-row{display:flex;align-items:center;gap:8px;background:var(--s1);
+  border:1px solid var(--bdr);border-radius:6px;padding:8px 11px;cursor:pointer;transition:all .15s}
+.torrent-row:hover{border-color:var(--dim);background:var(--s2)}
+.torrent-row.active{border-color:var(--grn);background:rgba(74,222,128,.05)}
+.tr-src{font-size:.6rem;font-weight:700;background:var(--s3);padding:2px 6px;border-radius:3px;color:var(--dim);flex-shrink:0}
+.tr-qual{font-size:.72rem;font-weight:600;color:var(--txt);min-width:52px}
+.tr-size{font-size:.69rem;color:var(--dim);min-width:68px}
+.tr-seeds{font-size:.69rem;color:var(--grn);display:flex;align-items:center;gap:3px}
+.tr-lang{font-size:.62rem;background:rgba(96,165,250,.12);color:var(--blu);padding:1px 5px;border-radius:3px}
+.tr-play{margin-left:auto;background:var(--red);border:none;color:#fff;
+  border-radius:4px;padding:4px 10px;font-size:.7rem;cursor:pointer}
+
+.progress-box{background:var(--s1);border:1px solid var(--bdr);border-radius:6px;padding:10px 13px;margin-bottom:10px;display:none}
+.progress-box.on{display:block}
+.pb-bar{background:var(--faint);border-radius:2px;height:4px;margin:6px 0}
+.pb-bar > div{height:100%;background:var(--grn);border-radius:2px;transition:width .5s}
+
+.video-wrap{position:relative;width:100%;height:380px;background:#000;
+  border-radius:8px;overflow:hidden;border:1px solid var(--bdr);box-shadow:0 18px 56px rgba(0,0,0,.7);display:none}
+.video-wrap.on{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+.spin{width:34px;height:34px;border:3px solid rgba(255,255,255,.08);
+  border-top-color:var(--red);border-radius:50%;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.video-fake{color:var(--dim);font-size:.85rem;display:flex;flex-direction:column;align-items:center;gap:10px}
+.video-fake .fake-frame{font-family:'Bebas Neue';font-size:3.2rem;letter-spacing:.04em;color:var(--faint)}
+
+.tip{background:var(--s1);border:1px solid var(--bdr);border-left:3px solid var(--grn);
+  border-radius:0 5px 5px 0;padding:9px 13px;margin-bottom:12px;font-size:.76rem;color:var(--dim)}
+.tip b{color:var(--grn)}
+
+.srvs .srv-sec{margin-bottom:10px}
+.srv-lbl{font-size:.61rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.dot{width:6px;height:6px;border-radius:50%}
+.dg{background:var(--grn)}.dd2{background:var(--faint)}
+.sbtns{display:flex;flex-wrap:wrap;gap:5px}
+.sbtn{background:var(--s2);border:1px solid var(--bdr);color:var(--dim);cursor:pointer;
+  border-radius:5px;padding:5px 10px;font-size:.72rem;font-weight:500;display:flex;align-items:center;gap:5px;transition:all .15s}
+.sbtn:hover{border-color:var(--dim);color:var(--txt)}
+.sbtn.on{background:var(--red);border-color:var(--red);color:#fff}
+.sbtn .sq{font-size:.59rem;opacity:.5}
+.srv-dot{width:5px;height:5px;border-radius:50%;background:var(--faint)}
+.srv-dot.ok{background:var(--grn)}.srv-dot.fail{background:var(--red)}
+.srv-dot.loading{background:var(--gold);animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.latbar{background:var(--s1);border:1px solid rgba(74,222,128,.2);border-radius:6px;
+  padding:11px 14px;margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.latinfo strong{display:block;font-size:.79rem;font-weight:600;color:var(--grn)}
+.latinfo span{font-size:.69rem;color:var(--dim)}
+
+footer{border-top:1px solid var(--bdr);padding:16px 0;text-align:center;
+  font-size:.67rem;color:var(--faint);margin-top:36px}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:2px}
+
+/* Poster gradients — fake posters since no TMDB images in offline kit */
+.p-dune{background:linear-gradient(135deg,#3a2532 0%,#1a1a2e 100%);color:var(--gold)}
+.p-evil{background:linear-gradient(160deg,#1f2937 0%,#0f0f1a 100%);color:var(--blu)}
+.p-flow{background:linear-gradient(150deg,#0a1f2e 0%,#1a0e1a 100%);color:var(--grn)}
+.p-perfect{background:linear-gradient(180deg,#2e1810 0%,#0a0a1a 100%);color:var(--red)}
+.p-blackdog{background:linear-gradient(120deg,#1a1a1a 0%,#2e0a0a 100%);color:var(--gold)}
+.p-anora{background:linear-gradient(135deg,#2e1a3a 0%,#0a0a1a 100%);color:#f1c0e8}
+.p-substance{background:linear-gradient(180deg,#3a0a14 0%,#0a0a1a 100%);color:var(--gold)}
+.p-fall{background:linear-gradient(160deg,#1a2e3a 0%,#0a1014 100%);color:var(--blu)}
+.p-chal{background:linear-gradient(135deg,#3a3a14 0%,#0a1a14 100%);color:var(--grn)}
+.p-frieren{background:linear-gradient(150deg,#1a3a2e 0%,#0a1a2e 100%);color:#a7f3d0}
+</style>
+</head>
+<body>
+
+<header>
+<div class="w">
+  <div class="hrow">
+    <div class="logo" onclick="goHome()">Nova<em>Cine</em></div>
+    <div class="sform">
+      <input class="si" placeholder="Busca película, serie o anime…">
+      <button class="btn btn-r" onclick="openPlayer('Dune: Part Two')">Buscar</button>
+    </div>
+    <div class="hbtns">
+      <button class="btn btn-pur">♥ Favoritos</button>
+    </div>
+  </div>
+  <div class="ttabs">
+    <button class="ttab on">🎬 Película</button>
+    <button class="ttab">📺 Serie</button>
+    <button class="ttab">🎌 Anime</button>
+    <button class="ttab">🔞 +18</button>
+  </div>
+  <div class="ubar">
+    <input class="ui" placeholder="Pega magnet: o URL directa (ok.ru / YouTube / Streamtape / Filemoon…)">
+    <button class="btn btn-g">▶ Cargar</button>
+  </div>
+</div>
+</header>
+
+<main class="w" id="main">
+
+  <!-- HOME -->
+  <div id="home">
+    <div class="section-label">Continuar viendo</div>
+    <div class="scroll-row">
+      <div class="card-sm" onclick="openPlayer('Evil Does Not Exist')">
+        <div class="card-img p-evil"><div class="poster-gen">EVIL DOES NOT EXIST</div></div>
+        <div class="cw-progress"><div style="width:42%"></div></div>
+        <div class="card-body">
+          <div class="card-title">Evil Does Not Exist</div>
+          <div class="card-meta"><span class="yr">42%</span></div>
+        </div>
+      </div>
+      <div class="card-sm" onclick="openPlayer('Perfect Days')">
+        <div class="card-img p-perfect"><div class="poster-gen">PERFECT DAYS</div></div>
+        <div class="cw-progress"><div style="width:73%"></div></div>
+        <div class="card-body">
+          <div class="card-title">Perfect Days</div>
+          <div class="card-meta"><span class="yr">73%</span></div>
+        </div>
+      </div>
+      <div class="card-sm" onclick="openPlayer('Frieren')">
+        <div class="card-img p-frieren"><div class="poster-gen">FRIEREN</div></div>
+        <div class="cw-progress"><div style="width:18%"></div></div>
+        <div class="card-body">
+          <div class="card-title">Frieren · T1·E08</div>
+          <div class="card-meta"><span class="yr">18%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Tendencias</div>
+    <div class="trend-tabs">
+      <button class="trend-tab on">🎬 Películas</button>
+      <button class="trend-tab">📺 Series</button>
+      <button class="trend-tab">🔥 Hoy</button>
+    </div>
+    <div class="grid">
+      <div class="card-sm" style="width:auto" onclick="openPlayer('Dune: Part Two')">
+        <div class="card-img p-dune"><div class="poster-gen">DUNE: PART TWO</div></div>
+        <div class="card-body"><div class="card-title">Dune: Part Two</div><div class="card-meta"><span class="yr">2024</span>★ 8.4</div></div>
+      </div>
+      <div class="card-sm" style="width:auto" onclick="openPlayer('Flow')">
+        <div class="card-img p-flow"><div class="poster-gen">FLOW</div></div>
+        <div class="card-body"><div class="card-title">Flow</div><div class="card-meta"><span class="yr">2024</span>★ 8.2</div></div>
+      </div>
+      <div class="card-sm" style="width:auto" onclick="openPlayer('Anora')">
+        <div class="card-img p-anora"><div class="poster-gen">ANORA</div></div>
+        <div class="card-body"><div class="card-title">Anora</div><div class="card-meta"><span class="yr">2024</span>★ 7.9</div></div>
+      </div>
+      <div class="card-sm" style="width:auto" onclick="openPlayer('The Substance')">
+        <div class="card-img p-substance"><div class="poster-gen">THE SUBSTANCE</div></div>
+        <div class="card-body"><div class="card-title">The Substance</div><div class="card-meta"><span class="yr">2024</span>★ 7.4</div></div>
+      </div>
+      <div class="card-sm" style="width:auto" onclick="openPlayer('The Fall Guy')">
+        <div class="card-img p-fall"><div class="poster-gen">THE FALL GUY</div></div>
+        <div class="card-body"><div class="card-title">The Fall Guy</div><div class="card-meta"><span class="yr">2024</span>★ 7.0</div></div>
+      </div>
+      <div class="card-sm" style="width:auto" onclick="openPlayer('Black Dog')">
+        <div class="card-img p-blackdog"><div class="poster-gen">BLACK DOG</div></div>
+        <div class="card-body"><div class="card-title">Black Dog</div><div class="card-meta"><span class="yr">2024</span>★ 7.6</div></div>
+      </div>
+      <div class="card-sm" style="width:auto" onclick="openPlayer('Challengers')">
+        <div class="card-img p-chal"><div class="poster-gen">CHALLENGERS</div></div>
+        <div class="card-body"><div class="card-title">Challengers</div><div class="card-meta"><span class="yr">2024</span>★ 7.3</div></div>
+      </div>
+      <div class="card-sm" style="width:auto" onclick="openPlayer('Evil Does Not Exist')">
+        <div class="card-img p-evil"><div class="poster-gen">EVIL DOES NOT EXIST</div></div>
+        <div class="card-body"><div class="card-title">Evil Does Not Exist</div><div class="card-meta"><span class="yr">2023</span>★ 7.5</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLAYER -->
+  <div id="player" class="player">
+    <div class="pmeta">
+      <div class="pposter p-dune">DUNE: PART TWO</div>
+      <div class="pinfo">
+        <div class="ptitle" id="ptitle">Dune: Part Two</div>
+        <div class="ptags">
+          <span class="tag t-r">+18</span>
+          <span class="tag t-grn">Multi-audio</span>
+          <span class="tag t-g">★ 8.4</span>
+          <span class="tag t-b">2024 · 166 min</span>
+        </div>
+        <div class="poverview">Paul Atreides se une con Chani y los Fremen mientras inicia una venganza contra los conspiradores que destruyeron a su familia.</div>
+        <div class="pactions">
+          <button class="btn btn-r">▶ Tráiler</button>
+          <button class="btn btn-g">+ Favoritos</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="player-tabs">
+      <button class="ptab on" id="tabT" onclick="switchTab('t')">🧲 Torrents <small style="opacity:.6">(sin anuncios)</small></button>
+      <button class="ptab" id="tabS" onclick="switchTab('s')">📡 Servidores embed</button>
+    </div>
+
+    <div id="paneT">
+      <div class="torrent-status"><span>Encontrados 4 torrents</span><button class="btn btn-g" style="font-size:.72rem;padding:5px 10px">↺ Recargar</button></div>
+      <div class="torrent-list">
+        <div class="torrent-row active" onclick="startStream(this)">
+          <span class="tr-src">YTS</span><span class="tr-qual">1080p</span><span class="tr-size">2.1 GB</span>
+          <span class="tr-seeds">▲ 1248</span><span class="tr-lang">en</span>
+          <button class="tr-play">▶ Reproducir</button>
+        </div>
+        <div class="torrent-row" onclick="startStream(this)">
+          <span class="tr-src">YTS</span><span class="tr-qual">4K</span><span class="tr-size">7.8 GB</span>
+          <span class="tr-seeds">▲ 842</span><span class="tr-lang">en</span>
+          <button class="tr-play">▶ Reproducir</button>
+        </div>
+        <div class="torrent-row" onclick="startStream(this)">
+          <span class="tr-src">YTS</span><span class="tr-qual">720p</span><span class="tr-size">980 MB</span>
+          <span class="tr-seeds">▲ 412</span><span class="tr-lang">en</span>
+          <button class="tr-play">▶ Reproducir</button>
+        </div>
+        <div class="torrent-row" onclick="startStream(this)">
+          <span class="tr-src">TPB</span><span class="tr-qual">1080p</span><span class="tr-size">2.3 GB</span>
+          <span class="tr-seeds">▲ 96</span><span class="tr-lang">sub</span>
+          <button class="tr-play">▶ Reproducir</button>
+        </div>
+      </div>
+
+      <div class="progress-box on">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:.72rem;color:var(--txt)">Dune.Part.Two.2024.1080p.WEB.mkv</span>
+          <button class="btn btn-g" style="font-size:.68rem;padding:3px 8px">⏹ Detener</button>
+        </div>
+        <div class="pb-bar"><div style="width:64%"></div></div>
+        <div style="display:flex;gap:14px;font-size:.67rem;color:var(--dim)">
+          <span>64%</span><span>↓ 8.2 MB/s</span><span>↑ 0.4 MB/s</span><span>32 peers</span>
+        </div>
+      </div>
+
+      <div class="video-wrap on">
+        <div class="video-fake">
+          <div class="fake-frame">▶</div>
+          <div class="spin"></div>
+          <div>Iniciando stream… (UI Kit · video fake)</div>
+        </div>
+      </div>
+
+      <div style="margin-top:8px;display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+        <span style="font-size:.65rem;background:rgba(74,222,128,.2);color:var(--grn);padding:3px 8px;border-radius:3px;border:1px solid rgba(74,222,128,.3);cursor:pointer">📝 Subtítulos ES cargados</span>
+        <label style="font-size:.7rem;color:var(--dim);display:flex;align-items:center;gap:4px">⚡
+          <select style="background:var(--s2);border:1px solid var(--bdr);color:var(--txt);border-radius:4px;padding:3px 6px;font-size:.72rem">
+            <option>1×</option><option>1.25×</option><option>1.5×</option><option>2×</option>
+          </select>
+        </label>
+        <button class="btn btn-g" style="font-size:.7rem;padding:4px 9px">⧉ PiP</button>
+        <button class="btn btn-g" style="font-size:.7rem;padding:4px 9px">💾 Guardar en Descargas</button>
+      </div>
+    </div>
+
+    <div id="paneS" style="display:none">
+      <div class="tip">
+        <b>🎧 Audio español:</b> Los servidores verdes ya llevan <b>lang=es</b> activado. En <b>Videasy</b> → ⚙️ → <b>Audio</b> → Spanish.
+      </div>
+      <div class="video-wrap on">
+        <div class="video-fake"><div class="fake-frame">📡</div><div class="spin"></div><div>Cargando Videasy…</div></div>
+      </div>
+      <div class="srvs" style="margin-top:12px">
+        <div class="srv-sec">
+          <div class="srv-lbl"><span class="dot dg"></span>ESPAÑOL / MULTI-AUDIO</div>
+          <div class="sbtns">
+            <button class="sbtn on"><span class="srv-dot ok"></span>Videasy <span class="sq">4K · Multi-audio</span></button>
+            <button class="sbtn"><span class="srv-dot ok"></span>VidLink ES <span class="sq">1080p · Dob/Sub ES</span></button>
+            <button class="sbtn"><span class="srv-dot loading"></span>vidsrc.su ES <span class="sq">1080p · Sub ES</span></button>
+            <button class="sbtn"><span class="srv-dot"></span>2embed ES <span class="sq">HD · ES</span></button>
+            <button class="sbtn"><span class="srv-dot fail"></span>NontonGo <span class="sq">1080p · ES</span></button>
+            <button class="sbtn"><span class="srv-dot"></span>frembed <span class="sq">HD · ES/LA</span></button>
+            <button class="sbtn"><span class="srv-dot"></span>Warezcdn ES <span class="sq">HD · ES</span></button>
+          </div>
+        </div>
+        <div class="srv-sec">
+          <div class="srv-lbl"><span class="dot dd2"></span>AUDIO ORIGINAL — 4K → 1080p</div>
+          <div class="sbtns">
+            <button class="sbtn"><span class="srv-dot"></span>StreamIMDB <span class="sq">4K · IMDB</span></button>
+            <button class="sbtn"><span class="srv-dot"></span>vidsrc.to <span class="sq">1080p</span></button>
+            <button class="sbtn"><span class="srv-dot ok"></span>VidFast <span class="sq">4K</span></button>
+            <button class="sbtn"><span class="srv-dot"></span>vidsrc.cc <span class="sq">1080p</span></button>
+            <button class="sbtn"><span class="srv-dot"></span>autoembed <span class="sq">1080p</span></button>
+            <button class="sbtn"><span class="srv-dot"></span>embed.su <span class="sq">1080p</span></button>
+            <button class="sbtn"><span class="srv-dot"></span>moviesapi <span class="sq">HD</span></button>
+            <button class="sbtn"><span class="srv-dot"></span>111movies <span class="sq">HD</span></button>
+            <button class="sbtn"><span class="srv-dot"></span>MultiEmbed <span class="sq">1080p</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="latbar">
+      <div style="display:flex;align-items:center;gap:9px">
+        <div style="font-size:1.4rem">🌎</div>
+        <div class="latinfo">
+          <strong>Buscar versión en Español</strong>
+          <span>YouTube · ok.ru · Cuevana3 · CineCalidad · Pelisplus · AnimeFLV</span>
+        </div>
+      </div>
+      <button class="btn btn-grn">🔍 Buscar Latino</button>
+    </div>
+  </div>
+
+</main>
+
+<footer class="w">
+  NovaCine v3 · 🧲 WebTorrent + 📡 Servidores embed · ⚠️ Solo uso personal
+</footer>
+
+<script>
+function openPlayer(title){
+  document.getElementById('home').style.display='none';
+  document.getElementById('player').classList.add('on');
+  document.getElementById('ptitle').textContent=title;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goHome(){
+  document.getElementById('home').style.display='';
+  document.getElementById('player').classList.remove('on');
+}
+function switchTab(t){
+  document.getElementById('tabT').classList.toggle('on',t==='t');
+  document.getElementById('tabS').classList.toggle('on',t==='s');
+  document.getElementById('paneT').style.display=t==='t'?'':'none';
+  document.getElementById('paneS').style.display=t==='s'?'':'none';
+}
+function startStream(row){
+  document.querySelectorAll('.torrent-row').forEach(r=>r.classList.remove('active'));
+  row.classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "novacine",
+  "version": "2.0.0",
+  "main": "main.js",
+  "description": "NovaCine – buscador de películas sin anuncios",
+  "dependencies": {
+    "webtorrent": "^1.9.7"
+  }
+}

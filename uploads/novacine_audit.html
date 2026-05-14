@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaCine — Auditoría Técnica</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap');
+
+  :root {
+    --bg: #080810;
+    --bg2: #0f0f1a;
+    --bg3: #15151f;
+    --red: #e5383b;
+    --green: #22c55e;
+    --yellow: #facc15;
+    --blue: #60a5fa;
+    --purple: #a78bfa;
+    --orange: #fb923c;
+    --dim: #6b7280;
+    --text: #e5e7eb;
+    --border: rgba(255,255,255,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 0 0 80px;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0f0f1a 0%, #1a0a0a 100%);
+    border-bottom: 1px solid rgba(229,56,59,0.2);
+    padding: 40px 60px 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .logo-text { font-family: 'Space Mono', monospace; font-size: 20px; color: var(--red); letter-spacing: -0.5px; }
+  .header-sub { color: var(--dim); font-size: 13px; }
+  .badge-version {
+    margin-left: auto;
+    background: rgba(229,56,59,0.15);
+    border: 1px solid rgba(229,56,59,0.3);
+    color: var(--red);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+
+  /* MAIN */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+
+  /* SECTION */
+  .section { margin-top: 56px; }
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--dim);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* SUMMARY GRID */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .stat-num { font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700; }
+  .stat-num.red { color: var(--red); }
+  .stat-num.green { color: var(--green); }
+  .stat-num.yellow { color: var(--yellow); }
+  .stat-num.blue { color: var(--blue); }
+  .stat-label { font-size: 12px; color: var(--dim); margin-top: 4px; }
+
+  /* BLOCK */
+  .block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .block-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .block-header:hover { background: rgba(255,255,255,0.02); }
+  .block-title { font-weight: 500; font-size: 15px; flex: 1; }
+  .block-body { padding: 20px; }
+
+  /* ITEMS */
+  .item { display: flex; gap: 12px; margin-bottom: 14px; }
+  .item:last-child { margin-bottom: 0; }
+  .item-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    margin-top: 8px; flex-shrink: 0;
+  }
+  .dot-red { background: var(--red); }
+  .dot-green { background: var(--green); }
+  .dot-yellow { background: var(--yellow); }
+  .dot-blue { background: var(--blue); }
+  .dot-purple { background: var(--purple); }
+  .dot-orange { background: var(--orange); }
+  .item-content {}
+  .item-title { font-weight: 500; font-size: 14px; margin-bottom: 3px; }
+  .item-desc { font-size: 13px; color: var(--dim); }
+
+  /* CODE */
+  code {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: rgba(255,255,255,0.06);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--blue);
+  }
+  pre {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: #090912;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+    line-height: 1.8;
+    margin-top: 10px;
+    color: #a8b3cf;
+  }
+  pre .kw { color: #c792ea; }
+  pre .str { color: #c3e88d; }
+  pre .cm { color: #546e7a; }
+  pre .fn { color: #82aaff; }
+  pre .red { color: var(--red); }
+  pre .grn { color: var(--green); }
+
+  /* TABLE */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl th {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--dim);
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .tbl td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    vertical-align: middle;
+  }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* BADGE */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .badge-red { background: rgba(229,56,59,0.15); color: var(--red); border: 1px solid rgba(229,56,59,0.25); }
+  .badge-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+  .badge-yellow { background: rgba(250,204,21,0.15); color: var(--yellow); border: 1px solid rgba(250,204,21,0.25); }
+  .badge-blue { background: rgba(96,165,250,0.15); color: var(--blue); border: 1px solid rgba(96,165,250,0.25); }
+  .badge-purple { background: rgba(167,139,250,0.15); color: var(--purple); border: 1px solid rgba(167,139,250,0.25); }
+  .badge-orange { background: rgba(251,146,60,0.15); color: var(--orange); border: 1px solid rgba(251,146,60,0.25); }
+
+  /* COLUMNS */
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px; background: var(--border);
+    margin: 20px 0;
+  }
+
+  /* PRIORITY */
+  .priority-list { display: flex; flex-direction: column; gap: 10px; }
+  .priority-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .p-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    min-width: 28px;
+    margin-top: 1px;
+  }
+
+  /* TABS */
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px;
+  }
+  .tab-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--dim);
+    transition: all .15s;
+  }
+  .tab-btn.active { background: rgba(255,255,255,0.07); color: var(--text); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ALERT BOX */
+  .alert {
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .alert-red { background: rgba(229,56,59,0.1); border: 1px solid rgba(229,56,59,0.2); }
+  .alert-green { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); }
+  .alert-yellow { background: rgba(250,204,21,0.1); border: 1px solid rgba(250,204,21,0.2); }
+
+  /* NEW SERVER ROW */
+  .srv-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 13px;
+  }
+  .srv-name { font-weight: 500; min-width: 150px; }
+  .srv-url { color: var(--dim); font-family: 'Space Mono', monospace; font-size: 11px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="logo-text">NOVACINE</div>
+    <div class="header-sub">Auditoría técnica completa · Mayo 2026</div>
+  </div>
+  <div class="badge-version">v3.1 · Electron 29 + HTML puro</div>
+</div>
+
+<div class="container">
+
+  <!-- RESUMEN EJECUTIVO -->
+  <div class="section">
+    <div class="section-title">Resumen ejecutivo</div>
+
+    <div class="summary-grid">
+      <div class="stat-card">
+        <div class="stat-num red">4</div>
+        <div class="stat-label">Problemas críticos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num yellow">9</div>
+        <div class="stat-label">Mejoras pendientes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num green">7</div>
+        <div class="stat-label">Servidores nuevos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num blue">18</div>
+        <div class="stat-label">Servidores actuales</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRÍTICOS -->
+  <div class="section">
+    <div class="section-title">Problemas críticos</div>
+
+    <div class="block">
+      <div class="block-header">
+        <span class="badge badge-red">🔴 CRÍTICO #1</span>
+        <span class="block-title">R18 completamente roto en modo web (HTML puro)</span>
+      </div>
+      <div class="block-body">
+        <div class="alert alert-red">
+          <span class="alert-icon">⚠️</span>
+          <div>Línea 972 de <code>index.html</code>: <code>if (!IS_ELECTRON) { showState(...); return; }</code> — en navegador el usuario ve error inmediatamente, sin ningún fallback.</div>
+        </div>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:12px;">El scraping de xvideos se hace desde Node.js (main process) para evitar CORS y antivirus. Correcto en Electron, pero en web puro no hay alternativa implementada.</p>
+        <p style="font-size:13px;font-weight:500;margin-bottom:8px;">Fix para modo web:</p>
+        <pre><span class="cm">// eporner tiene CORS abierto — funciona en browser sin proxy</span>
+<span class="kw">const</span> url = <span class="str">`https://www.eporner.com/api/v2/video/search/?query=${q}&per_page=24&format=json`</span>;
+<span class="kw">const</span> res = <span class="kw">await</span> fetch(url);            <span class="cm">// ✅ sin CORS</span>
+<span class="kw">const</span> data = <span class="kw">await</span> res.json();
+<span class="cm">// data.videos[] → cada video tiene .embed (URL iframe directa)</span></pre>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <span class="badge badge-red">🔴 CRÍTICO #2</span>
+        <span class="block-title">Scrapers "Buscar Latino" fallan en web por dependencia de proxies</span>
+      </div>
+      <div class="block-body">
+        <div class="alert alert-yellow">
+          <span class="alert-icon">⚡</span>
+          <div>Los scrapers (Cuevana3, CineCalidad, AnimeFLV, ok.ru) usan <code>proxyFetch()</code> que en modo web pasa por <code>allorigins.win</code> o <code>corsproxy.io</code>. Ambos bloquean frecuentemente estas URLs piratas y tienen alta latencia.</div>
+        </div>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:10px;">En Electron esto no es un problema porque <code>nativeFetch()</code> usa Node.js directamente y evita CORS. El issue es solo para el modo web.</p>
+        <div class="cols-2" style="margin-top:12px;">
+          <div>
+            <p style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:8px;">✅ Funciona en web</p>
+            <div class="item"><div class="item-dot dot-green"></div><div class="item-desc">YouTube via Invidious API (CORS abierto)</div></div>
+            <div class="item"><div class="item-dot dot-green"></div><div class="item-desc">Servidores embed iframe (todos los 18)</div></div>
+            <div class="item"><div class="item-dot dot-green"></div><div class="item-desc">Búsqueda TMDB completa</div></div>
+          </div>
+          <div>
+            <p style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:8px;">❌ Roto en web</p>
+            <div class="item"><div class="item-dot dot-red"></div><div class="item-desc">Cuevana3, CineCalidad (CORS bloqueado)</div></div>
+            <div class="item"><div class="item-dot dot-red"></div><div class="item-desc">Pelisplus, AnimeFLV (idem)</div></div>
+            <div class="item"><div class="item-dot dot-red"></div><div class="item-desc">ok.ru scraper (necesita proxy)</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <span class="badge badge-red">🔴 CRÍTICO #3</span>
+        <span class="block-title">Subtítulos siempre fallan (OpenSubtitles sin API key) + bug type=movie en series</span>
+      </div>
+      <div class="block-body">
+        <div class="alert alert-red">
+          <span class="alert-icon">⚠️</span>
+          <div>El código tiene la API key de OpenSubtitles hardcodeada como falsa → siempre falla. Segundo bug: <code>fetchSubtitles</code> en series siempre pasa <code>type=movie</code> sin season/episode.</div>
+        </div>
+        <p style="font-size:13px;font-weight:500;margin:12px 0 8px;">Fix: SubDL ya está implementado correctamente. Añadir YifySubtitles como fallback sin key:</p>
+        <pre><span class="cm">// YifySubtitles — sin API key, CORS abierto, solo películas</span>
+<span class="kw">const</span> url = <span class="str">`https://yifysubtitles.ch/movie-imdb/${imdbId}`</span>;
+<span class="cm">// Devuelve página con links .zip de subtítulos → parsear</span>
+
+<span class="cm">// Fix para series — pasar datos correctos:</span>
+<span class="fn">fetchSubtitles</span>({ imdbId, <span class="kw">type</span>: S.isSeries ? <span class="str">'tv'</span> : <span class="str">'movie'</span>, season: S.curS, episode: S.curE })</pre>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-header">
+        <span class="badge badge-red">🔴 CRÍTICO #4</span>
+        <span class="block-title">Historial con posters rotos — path sin "/" inicial</span>
+      </div>
+      <div class="block-body">
+        <p style="font-size:13px;color:var(--dim);margin-bottom:12px;">Items guardados antes del fix tienen <code>posterPath</code> sin "/" → la URL queda <code>https://image.tmdb.org/t/p/w300undefined/abc.jpg</code>. Fix de una línea al cargar historial:</p>
+        <pre><span class="cm">// Al cargar historial del localStorage:</span>
+history = history.map(item => ({
+  ...item,
+  posterPath: item.posterPath && !item.posterPath.startsWith(<span class="str">'/'</span>) 
+    ? <span class="str">'/'</span> + item.posterPath 
+    : item.posterPath
+}));</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- HTML PURO vs ELECTRON -->
+  <div class="section">
+    <div class="section-title">HTML puro vs .exe — qué funciona dónde</div>
+
+    <div class="block">
+      <div class="block-body" style="padding:0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>HTML puro (web)</th>
+              <th>App .exe (Electron)</th>
+              <th>Motivo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Búsqueda TMDB</td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td>API pública con CORS</td>
+            </tr>
+            <tr>
+              <td>Trending / Home</td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Favoritos / Historial</td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td>localStorage</td>
+            </tr>
+            <tr>
+              <td>Servidores embed (18)</td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td>iframes cross-origin</td>
+            </tr>
+            <tr>
+              <td>Trailers (Invidious)</td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td>API pública con CORS</td>
+            </tr>
+            <tr>
+              <td>Buscar Latino → YouTube</td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td>Invidious API</td>
+            </tr>
+            <tr>
+              <td>Buscar Latino → Cuevana3/CineCalidad</td>
+              <td><span class="badge badge-red">❌ ~30% éxito</span></td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td>CORS → proxy externo poco fiable</td>
+            </tr>
+            <tr>
+              <td>Torrents (WebTorrent)</td>
+              <td><span class="badge badge-red">❌ No disponible</span></td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td>Node.js / puerto local</td>
+            </tr>
+            <tr>
+              <td>Subtítulos</td>
+              <td><span class="badge badge-red">❌ No disponible</span></td>
+              <td><span class="badge badge-yellow">⚠️ SubDL funciona</span></td>
+              <td>CORS en SubDL / key falsa OS</td>
+            </tr>
+            <tr>
+              <td>R18 — búsqueda xvideos</td>
+              <td><span class="badge badge-red">❌ No disponible</span></td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td>Solo desde Node process</td>
+            </tr>
+            <tr>
+              <td>R18 — eporner API</td>
+              <td><span class="badge badge-blue">🔵 Posible (no impl.)</span></td>
+              <td><span class="badge badge-blue">🔵 Posible (no impl.)</span></td>
+              <td>Tiene CORS abierto</td>
+            </tr>
+            <tr>
+              <td>Proxy imagen (posters R18)</td>
+              <td><span class="badge badge-red">❌ No disponible</span></td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td>Solo desde Node process</td>
+            </tr>
+            <tr>
+              <td>Descarga offline (torrent)</td>
+              <td><span class="badge badge-red">❌ No disponible</span></td>
+              <td><span class="badge badge-green">✅ Funciona</span></td>
+              <td>save-to-downloads IPC</td>
+            </tr>
+            <tr>
+              <td>Ad-block profundo</td>
+              <td><span class="badge badge-yellow">⚠️ Solo CSP del browser</span></td>
+              <td><span class="badge badge-green">✅ 60+ dominios bloqueados</span></td>
+              <td>webRequest en Electron</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVIDORES NUEVOS -->
+  <div class="section">
+    <div class="section-title">Servidores nuevos recomendados</div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab(this,'lat')">🌎 Latino (LAT)</button>
+      <button class="tab-btn" onclick="switchTab(this,'std')">🌐 Estándar (STD)</button>
+      <button class="tab-btn" onclick="switchTab(this,'r18')">🔞 R18</button>
+    </div>
+
+    <div class="tab-content active" id="tab-lat">
+      <div class="block">
+        <div class="block-body">
+          <p style="font-size:13px;color:var(--dim);margin-bottom:16px;">Añadir al array <code>LAT</code> en <code>index.html</code>:</p>
+          <pre><span class="cm">// 1. VidLux — 9 servidores internos, auto-fallback, subtítulos ES ✅</span>
+{ n:<span class="str">'VidLux'</span>, q:<span class="str">'Multi-server · Sub ES'</span>,
+  m: id => <span class="str">`https://vidlux.xyz/embed/movie/${id}`</span>,
+  t: (id,s,e) => <span class="str">`https://vidlux.xyz/embed/tv/${id}/${s}/${e}`</span> },
+
+<span class="cm">// 2. 2embed.stream (distinto de 2embed.cc) ✅</span>
+{ n:<span class="str">'2embed Stream'</span>, q:<span class="str">'HD · Multi'</span>,
+  m: id => <span class="str">`https://www.2embed.stream/embed/movie/${id}`</span>,
+  t: (id,s,e) => <span class="str">`https://www.2embed.stream/embed/tv/${id}/${s}/${e}`</span> },
+
+<span class="cm">// 3. VidPlus — customizable, multi-servidor ✅</span>
+{ n:<span class="str">'VidPlus'</span>, q:<span class="str">'HD · ES'</span>,
+  m: id => <span class="str">`https://player.vidplus.to/embed/movie/${id}?autoplay=true&lang=es`</span>,
+  t: (id,s,e) => <span class="str">`https://player.vidplus.to/embed/tv/${id}/${s}/${e}?autoplay=true&lang=es`</span> },</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-std">
+      <div class="block">
+        <div class="block-body">
+          <pre><span class="cm">// 4. autoembed.co (distinto de autoembed.cc) — anime también ✅</span>
+{ n:<span class="str">'autoembed.co'</span>, q:<span class="str">'1080p · Anime'</span>,
+  m: id => <span class="str">`https://autoembed.co/movie/tmdb/${id}`</span>,
+  t: (id,s,e) => <span class="str">`https://autoembed.co/tv/tmdb/${id}-${s}-${e}`</span> },
+
+<span class="cm">// 5. EmbedMaster — IMDb ID, múltiples servidores ✅ (imdb:true)</span>
+{ n:<span class="str">'EmbedMaster'</span>, q:<span class="str">'HD · IMDB'</span>, imdb:<span class="kw">true</span>,
+  m: id => <span class="str">`https://embedmaster.link/movie/${id}`</span>,
+  t: (id,s,e) => <span class="str">`https://embedmaster.link/tv/${id}/${s}/${e}`</span> },
+
+<span class="cm">// 6. VikingEmbed (vembed.click) — IMDB ID ✅</span>
+{ n:<span class="str">'VikingEmbed'</span>, q:<span class="str">'HD · IMDB'</span>, imdb:<span class="kw">true</span>,
+  m: id => <span class="str">`https://vembed.click/play/${id}`</span>,
+  t: (id,s,e) => <span class="str">`https://vembed.click/play/${id}?s=${s}&e=${e}`</span> },
+
+<span class="cm">// 7. MultiEmbed directstream (sin popup, VIP) ✅</span>
+{ n:<span class="str">'MultiEmbed VIP'</span>, q:<span class="str">'HLS · Fast'</span>,
+  m: id => <span class="str">`https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`</span>,
+  t: (id,s,e) => <span class="str">`https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1&s=${s}&e=${e}`</span> },</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-r18">
+      <div class="block">
+        <div class="block-body">
+          <div class="alert alert-yellow">
+            <span class="alert-icon">⚡</span>
+            <div><strong>El problema real:</strong> missav, jable.tv y sitios JAV no tienen API pública ni CORS abierto. El scraping de listas <em>solo funciona desde el proceso Node de Electron</em>. En modo web, la única opción viable es eporner (CORS abierto) + iframes directos.</div>
+          </div>
+
+          <p style="font-size:13px;font-weight:600;margin:16px 0 10px;">Estrategia por capa:</p>
+
+          <div class="item"><div class="item-dot dot-green"></div><div><div class="item-title">eporner API — funciona en web Y Electron</div><div class="item-desc">CORS abierto. Endpoint: <code>https://www.eporner.com/api/v2/video/search/?query={q}&per_page=24&format=json</code>. Cada video tiene campo <code>.embed</code> con iframe URL directa. Reemplaza o complementa xvideos.</div></div></div>
+
+          <div class="item"><div class="item-dot dot-blue"></div><div><div class="item-title">xvideos (actual) — solo Electron</div><div class="item-desc">Correcto mantenerlo como fuente primaria en Electron. El IPC <code>search-r18</code> en Node evita CORS y AV. Problema: detección de miniaturas por regex frágil — considerar mejorar el parser.</div></div></div>
+
+          <div class="item"><div class="item-dot dot-purple"></div><div><div class="item-title">missav.ws / jable.tv — solo Electron (Node proxy)</div><div class="item-desc">Para JAV: buscar en <code>https://missav.ws/search/{código}</code> desde Node, extraer URLs de embed. <strong>No implementable en web puro por CORS total.</strong> Requiere fetch desde main process y parsear HTML.</div></div></div>
+
+          <div class="item"><div class="item-dot dot-orange"></div><div><div class="item-title">vidsrc.to / embed.su con IDs adultos TMDB</div><div class="item-desc">Ya anotado en NOTAS.md. Estos servidores indexan algunos títulos adultos de TMDB. Añadir como servidores del tab R18 cuando el tipo es <code>r18</code>.</div></div></div>
+
+          <pre style="margin-top:16px;"><span class="cm">/* eporner API — sin CORS, sin proxy, sin Node */</span>
+<span class="kw">async function</span> <span class="fn">searchEporner</span>(q) {
+  <span class="kw">const</span> url = <span class="str">`https://www.eporner.com/api/v2/video/search/?query=${encodeURIComponent(q)}&per_page=24&format=json&thumbsize=medium&order=top-rated`</span>;
+  <span class="kw">const</span> res = <span class="kw">await</span> fetch(url);
+  <span class="kw">const</span> data = <span class="kw">await</span> res.json();
+  <span class="kw">return</span> (data.videos || []).map(v => ({
+    id:       v.id,
+    title:    v.title,
+    thumb:    v.thumbs?.[0]?.src || <span class="kw">null</span>,
+    embedUrl: v.embed,      <span class="cm">// ← URL iframe directa ✅</span>
+    duration: v.length_min,
+    views:    v.views,
+    isR18direct: <span class="kw">true</span>,
+  }));
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROBLEMA DORAEMON / CONTENIDO EN ESPAÑOL -->
+  <div class="section">
+    <div class="section-title">El problema de Doraemon / Beautiful in Black — cómo resolverlo</div>
+
+    <div class="block">
+      <div class="block-body">
+        <p style="font-size:13px;color:var(--dim);margin-bottom:16px;">Este es el problema más complejo. El sistema actual busca en Cuevana/Pelisplus con el título en inglés de TMDB. Muchos títulos están indexados con nombre en español distinto.</p>
+
+        <div class="priority-list">
+          <div class="priority-item">
+            <div class="p-num" style="color:var(--red)">1</div>
+            <div>
+              <div class="item-title">Buscar con título en español de TMDB (fix inmediato)</div>
+              <div class="item-desc" style="margin-top:4px;">TMDB tiene el campo <code>title</code> en español si pides <code>language=es-MX</code>. Antes de scraping, hacer un GET al detalle del film en español y usar ese título para la búsqueda en Cuevana/Pelisplus.</div>
+              <pre style="margin-top:8px;"><span class="cm">// Obtener título en español antes de buscar:</span>
+<span class="kw">const</span> r = <span class="kw">await</span> fetch(<span class="str">`https://api.themoviedb.org/3/movie/${S.tmdbId}?api_key=${KEY}&language=es-MX`</span>);
+<span class="kw">const</span> d = <span class="kw">await</span> r.json();
+<span class="kw">const</span> titleES = d.title || S.title;  <span class="cm">// usar en scrapers</span></pre>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="p-num" style="color:var(--yellow)">2</div>
+            <div>
+              <div class="item-title">Panel admin (Ctrl+Shift+A) para mapeo manual — ya planeado</div>
+              <div class="item-desc" style="margin-top:4px;">Para casos como Doraemon donde el título no coincide con ningún scraper automático: tabla editable en localStorage con <code>tmdbId → URL custom</code>. Antes de cualquier búsqueda automática, consultar este mapa. Es la solución definitiva para el problema.</div>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="p-num" style="color:var(--blue)">3</div>
+            <div>
+              <div class="item-title">Ampliar "Buscar Latino" con más sitios (DivxTotal, Gnula, Repelis)</div>
+              <div class="item-desc" style="margin-top:4px;">DivxTotal y Gnula tienen catálogos de español latino más completos para series latinoamericanas y doblajes específicos. En Electron funcionan via Node. En web → proxy (poco fiable).</div>
+              <pre style="margin-top:8px;"><span class="cm">// DivxTotal — desde Node, español latino</span>
+<span class="fn">nodeFetchRaw</span>(<span class="str">`https://www.divxtotal.run/?s=${encodeURIComponent(title)}`</span>)
+<span class="cm">// Gnula — buen catálogo LA</span>
+<span class="fn">nodeFetchRaw</span>(<span class="str">`https://gnula.nu/?s=${encodeURIComponent(title)}`</span>)</pre>
+            </div>
+          </div>
+
+          <div class="priority-item">
+            <div class="p-num" style="color:var(--green)">4</div>
+            <div>
+              <div class="item-title">Torrents en español → DivxTotal, PeliculasYSeries, MejorTorrent</div>
+              <div class="item-desc" style="margin-top:4px;">Ya documentado en NOTAS.md. Son la mejor fuente para doblajes completos en LAT. El problema es que requieren scraping de HTML desde Node. Para series con pocos torrents en YTS/EZTV (inglés), estos sitios tienen la versión doblada que falta.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEJORAS GENERALES -->
+  <div class="section">
+    <div class="section-title">Mejoras de calidad — orden de impacto</div>
+
+    <div class="block">
+      <div class="block-body" style="padding:0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Mejora</th>
+              <th>Dificultad</th>
+              <th>Impacto</th>
+              <th>Tipo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:var(--dim);font-family:'Space Mono',monospace;font-size:11px;">01</td>
+              <td>Auto-fallback de servidor en &lt;5s si el iframe no carga</td>
+              <td><span class="badge badge-green">Fácil</span></td>
+              <td><span class="badge badge-red">Alto</span></td>
+              <td><span class="badge badge-blue">Web + .exe</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--dim);font-family:'Space Mono',monospace;font-size:11px;">02</td>
+              <td>Fix historial roto (posters sin "/" inicial)</td>
+              <td><span class="badge badge-green">1 línea</span></td>
+              <td><span class="badge badge-yellow">Medio</span></td>
+              <td><span class="badge badge-blue">Web + .exe</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--dim);font-family:'Space Mono',monospace;font-size:11px;">03</td>
+              <td>eporner API como fallback R18 en modo web</td>
+              <td><span class="badge badge-green">Fácil</span></td>
+              <td><span class="badge badge-red">Alto</span></td>
+              <td><span class="badge badge-purple">Solo web</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--dim);font-family:'Space Mono',monospace;font-size:11px;">04</td>
+              <td>Buscar con título en español de TMDB (es-MX)</td>
+              <td><span class="badge badge-green">Fácil</span></td>
+              <td><span class="badge badge-red">Alto</span></td>
+              <td><span class="badge badge-blue">Web + .exe</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--dim);font-family:'Space Mono',monospace;font-size:11px;">05</td>
+              <td>Fix subtítulos: type correcto para series + season/episode</td>
+              <td><span class="badge badge-green">1 línea</span></td>
+              <td><span class="badge badge-yellow">Medio</span></td>
+              <td><span class="badge badge-orange">Solo .exe</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--dim);font-family:'Space Mono',monospace;font-size:11px;">06</td>
+              <td>7 servidores nuevos (VidLux, 2embed.stream, VidPlus...)</td>
+              <td><span class="badge badge-green">Fácil</span></td>
+              <td><span class="badge badge-yellow">Medio</span></td>
+              <td><span class="badge badge-blue">Web + .exe</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--dim);font-family:'Space Mono',monospace;font-size:11px;">07</td>
+              <td>Panel admin Ctrl+Shift+A — mapeo manual de títulos</td>
+              <td><span class="badge badge-yellow">Media</span></td>
+              <td><span class="badge badge-red">Alto</span></td>
+              <td><span class="badge badge-blue">Web + .exe</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--dim);font-family:'Space Mono',monospace;font-size:11px;">08</td>
+              <td>Picture-in-Picture (<code>video.requestPictureInPicture()</code>)</td>
+              <td><span class="badge badge-green">1 línea</span></td>
+              <td><span class="badge badge-yellow">Medio</span></td>
+              <td><span class="badge badge-blue">Web + .exe</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--dim);font-family:'Space Mono',monospace;font-size:11px;">09</td>
+              <td>Velocidad de reproducción (1x/1.25x/1.5x/2x)</td>
+              <td><span class="badge badge-green">Fácil</span></td>
+              <td><span class="badge badge-yellow">Medio</span></td>
+              <td><span class="badge badge-blue">Web + .exe</span></td>
+            </tr>
+            <tr>
+              <td style="color:var(--dim);font-family:'Space Mono',monospace;font-size:11px;">10</td>
+              <td>missav.ws scraping desde Node para JAV/japonés</td>
+              <td><span class="badge badge-red">Alta</span></td>
+              <td><span class="badge badge-yellow">Medio</span></td>
+              <td><span class="badge badge-orange">Solo .exe</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- LO QUE ESTÁ BIEN -->
+  <div class="section">
+    <div class="section-title">Lo que está bien implementado ✅</div>
+
+    <div class="cols-2">
+      <div class="block">
+        <div class="block-body">
+          <div class="item"><div class="item-dot dot-green"></div><div><div class="item-title">IS_ELECTRON detection</div><div class="item-desc">El flag <code>IS_ELECTRON</code> y el patrón <code>nativeFetch()</code> degradan gracefully. Código bien estructurado para dual-mode.</div></div></div>
+          <div class="item"><div class="item-dot dot-green"></div><div><div class="item-title">Ad-block en 3 capas</div><div class="item-desc">Main process + session playerSess + did-attach-webview. Bloquea 60+ dominios. Sólido y completo.</div></div></div>
+          <div class="item"><div class="item-dot dot-green"></div><div><div class="item-title">WebTorrent con Range HTTP</div><div class="item-desc">Servidor local con soporte Range correcto para seeking en <code>&lt;video&gt;</code>. Content-Type forzado a video/mp4 funciona bien para MKV también.</div></div></div>
+          <div class="item"><div class="item-dot dot-green"></div><div><div class="item-title">SubDL sin API key</div><div class="item-desc">Buena decisión reemplazar OpenSubtitles. SubDL funciona bien para películas en español.</div></div></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-body">
+          <div class="item"><div class="item-dot dot-green"></div><div><div class="item-title">CORS proxy doble (allorigins + corsproxy.io)</div><div class="item-desc">El fallback entre dos proxies es inteligente. Solo falla cuando ambos bloquean el dominio objetivo.</div></div></div>
+          <div class="item"><div class="item-dot dot-green"></div><div><div class="item-title">Trailers via Invidious</div><div class="item-desc">Evita el Error 153 de YouTube embed. Lista de 4 instancias con fallback automático. Funciona en web y Electron.</div></div></div>
+          <div class="item"><div class="item-dot dot-green"></div><div><div class="item-title">ZIP extractor nativo</div><div class="item-desc">Parser ZIP sin dependencias para los .srt de SubDL. Uso de <code>zlib.inflateRawSync</code>. Elegante.</div></div></div>
+          <div class="item"><div class="item-dot dot-green"></div><div><div class="item-title">reqId para race conditions</div><div class="item-desc">El contador <code>S.reqId</code> previene resultados de búsquedas anteriores que llegan tarde. Detalle importante.</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(btn, id) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+</script>
+</body>
+</html>

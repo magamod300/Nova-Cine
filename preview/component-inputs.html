@@ -1,0 +1,46 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="_card.css">
+<style>
+  .field{display:flex;flex-direction:column;gap:6px}
+  .flbl{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:#666685;font-weight:500}
+  .iwrap{position:relative;display:flex;align-items:center}
+  .iwrap svg.lead{position:absolute;left:14px;width:15px;height:15px;color:#666685;pointer-events:none}
+  .iwrap input{width:100%;background:#161625;border:1px solid #252540;border-radius:7px;
+    padding:13px 16px 13px 40px;font-size:.92rem;font-family:'Netflix Sans',sans-serif;
+    color:#eaeaf0;outline:none;transition:border-color .15s,background .15s,box-shadow .15s;letter-spacing:.005em}
+  .iwrap input::placeholder{color:#4d4d6b}
+  .iwrap input:focus{border-color:#e5383b;background:#1a1a2a;box-shadow:0 0 0 3px rgba(229,56,59,.12)}
+  .iwrap.url input{font-size:.82rem;padding:11px 14px 11px 38px;background:#0f0f1a;font-style:italic}
+  .iwrap .kbd{position:absolute;right:10px;background:#1e1e32;border:1px solid #252540;
+    border-radius:4px;padding:2px 7px;font-size:.62rem;color:#8a8aa3;font-family:ui-monospace,Menlo,monospace}
+  .iwrap.focus input{border-color:#e5383b;background:#1a1a2a;box-shadow:0 0 0 3px rgba(229,56,59,.12)}
+  .iwrap.focus .caret{position:absolute;left:243px;width:1.5px;height:18px;background:#e5383b;animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{opacity:0}}
+</style>
+</head>
+<body><div class="col" style="gap:14px">
+  <div class="field">
+    <div class="flbl">main search · default</div>
+    <div class="iwrap">
+      <svg class="lead" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+      <input placeholder="Busca película, serie o anime…">
+      <span class="kbd">⌘ K</span>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="flbl">main search · focused</div>
+    <div class="iwrap focus">
+      <svg class="lead" viewBox="0 0 16 16" fill="none" stroke="#e5383b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+      <input value="Dune Part Two">
+      <span class="caret"></span>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="flbl">URL / magnet bar</div>
+    <div class="iwrap url">
+      <svg class="lead" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="left:13px"><path d="M7 9 4.5 11.5a2.5 2.5 0 0 1-3.5-3.5L4 5"/><path d="M9 7l2.5-2.5a2.5 2.5 0 0 1 3.5 3.5L12 11"/><path d="M6 10 10 6"/></svg>
+      <input placeholder="Pega magnet: o URL directa (ok.ru / YouTube / Streamtape…)">
+    </div>
+  </div>
+</div></body></html>

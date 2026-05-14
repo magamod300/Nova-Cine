@@ -1,0 +1,57 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="_card.css">
+<style>
+  .tab{background:transparent;border:1px solid #252540;color:#8a8aa3;cursor:pointer;
+    border-radius:5px;padding:6px 12px;font-size:.74rem;font-weight:500;font-family:'Netflix Sans',sans-serif;
+    display:inline-flex;align-items:center;gap:7px;line-height:1;transition:all .15s;letter-spacing:.005em}
+  .tab:hover{border-color:#363655;color:#eaeaf0}
+  .tab.on{background:#e5383b;border-color:#e5383b;color:#fff}
+  .tab svg{width:13px;height:13px;flex-shrink:0}
+  .seg{display:flex;border:1px solid #252540;border-radius:7px;overflow:hidden;margin-top:4px}
+  .seg button{flex:1;background:#0f0f1a;border:none;color:#666685;cursor:pointer;
+    padding:10px 14px;font-size:.76rem;font-weight:500;font-family:'Netflix Sans',sans-serif;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
+  .seg button:hover{background:#161625;color:#a5a5b8}
+  .seg button.on{background:#1e1e32;color:#eaeaf0;border-bottom:2px solid #e5383b}
+  .seg svg{width:14px;height:14px;flex-shrink:0}
+  .seg small{font-size:.62rem;font-weight:400;opacity:.55;margin-left:1px}
+</style>
+</head>
+<body><div class="col" style="gap:10px">
+  <div style="display:flex;gap:5px;flex-wrap:wrap">
+    <button class="tab on">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="3" width="12" height="10" rx="1.2"/><path d="M2 6h12M6 3v10M10 3v10"/></svg>
+      Película
+    </button>
+    <button class="tab">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="3" width="12" height="8.5" rx="1.2"/><path d="M5.5 14h5M8 11.5v2.5"/></svg>
+      Serie
+    </button>
+    <button class="tab">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 1.8c2 1.6 4.6 2.4 6 2.4 0 4-1.4 7.4-6 9.6-4.6-2.2-6-5.6-6-9.6 1.4 0 4-.8 6-2.4z"/><circle cx="8" cy="7" r="1.2"/></svg>
+      Anime
+    </button>
+    <button class="tab">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="8" r="6.2"/><path d="M5.2 7v2M10.8 7v2M5.5 11.5c1 1 4 1 5 0"/></svg>
+      +18
+    </button>
+  </div>
+  <div class="label" style="margin-top:2px">type tabs — single-select, red bg when active</div>
+
+  <div class="seg">
+    <button class="on">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="8" r="2.4"/><path d="M8 5.6V2M8 14v-3.6M5.6 8H2M14 8h-3.6M6.3 6.3 3.8 3.8M12.2 12.2 9.7 9.7M6.3 9.7l-2.5 2.5M12.2 3.8 9.7 6.3"/></svg>
+      Torrents <small>sin anuncios</small>
+    </button>
+    <button>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="12" r="1.4"/><path d="M4.4 9c1-1 2.2-1.6 3.6-1.6S10.6 8 11.6 9M2 6.4c1.6-1.6 3.6-2.4 6-2.4s4.4.8 6 2.4"/></svg>
+      Servidores embed
+    </button>
+  </div>
+  <div class="label">player tabs — segmented, red underline marks active</div>
+</div></body></html>
